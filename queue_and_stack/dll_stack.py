@@ -12,11 +12,16 @@ class Stack:
 
     # push adds new items to the end of the array
     def push(self, value):
-        self.storage.append(value)
+        return self.storage.add_to_tail(value)
 
     # pop remvoes items to the end of the array
     def pop(self):
-        self.storage.pop()
+        # what if no items on stack
+        if self.storage.__len__() == 0:
+            return
+        else:
+            return self.storage.remove_from_tail()
 
+    # length of list
     def len(self):
-        len(self.storage)
+        return self.storage.__len__()
