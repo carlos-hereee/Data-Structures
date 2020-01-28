@@ -1,3 +1,7 @@
+from doubly_linked_list import DoublyLinkedList
+import sys
+
+
 class LRUCache:
     """
     Our LRUCache class keeps track of the max number of nodes it
@@ -6,8 +10,12 @@ class LRUCache:
     order, as well as a storage dict that provides fast access
     to every node stored in the cache.
     """
+
     def __init__(self, limit=10):
-        pass
+        self.limit = limit
+        # impliment DoublyLinked list
+        self.storage = DoublyLinkedList()
+        self.cache = {}
 
     """
     Retrieves the value associated with the given key. Also
@@ -16,8 +24,16 @@ class LRUCache:
     Returns the value associated with the key or None if the
     key-value pair doesn't exist in the cache.
     """
+
     def get(self, key):
-        pass
+        # if the key is in the cache move to head
+        if key in self.cache:
+            new_head = self.cache[key]
+            self.storage.move_to_front
+            return new_head
+        # return none if it doenst exist
+        else:
+            return
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -29,5 +45,24 @@ class LRUCache:
     want to overwrite the old value associated with the key with
     the newly-specified value.
     """
+
     def set(self, key, value):
-        pass
+        # overwrite if key already exist to make room and max cap
+        if key in self.cache and len(self.cache) > self.limit:
+            # first delete item from cache
+            self.storage.delete(value)
+            # then add to head
+            return self.storage.add_to_head(value)
+        # else if only the key is in cache
+        elif key in self.cache:
+            # first delete item from cache
+            self.storage.delete(value)
+            # then add to head
+            return self.storage.add_to_head(value)
+        #  else if at max cap
+        elif len(self.cache) > self.limit:
+            # make from for new entry
+            self.storage.remove_from_tail()
+            return self.storage.add_to_head(value)
+        else:
+            return self.storage.add_to_head(value)
