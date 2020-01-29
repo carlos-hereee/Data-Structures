@@ -13,9 +13,9 @@ class LRUCache:
 
     def __init__(self, limit=10):
         self.limit = limit
-        # impliment DoublyLinked list
-        self.storage = DoublyLinkedList()
-        self.cache = {}
+        self.size = 0
+        self.order = DoublyLinkedList()
+        self.storage = dict()
 
     """
     Retrieves the value associated with the given key. Also
@@ -27,13 +27,13 @@ class LRUCache:
 
     def get(self, key):
         # if the key is in the cache move to head
-        if key in self.cache:
-            new_head = self.cache[key]
-            self.storage.move_to_front
-            return new_head
+        if key in self.storage:
+            new_tail = self.storage[key]
+            self.order.move_to_end(new_tail)
+            return new_tail.value[1]
         # return none if it doenst exist
         else:
-            return
+            return None
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -48,21 +48,19 @@ class LRUCache:
 
     def set(self, key, value):
         # overwrite if key already exist to make room and max cap
-        if key in self.cache and len(self.cache) > self.limit:
-            # first delete item from cache
-            self.storage.delete(value)
-            # then add to head
-            return self.storage.add_to_head(value)
-        # else if only the key is in cache
-        elif key in self.cache:
-            # first delete item from cache
-            self.storage.delete(value)
-            # then add to head
-            return self.storage.add_to_head(value)
-        #  else if at max cap
-        elif len(self.cache) > self.limit:
-            # make from for new entry
-            self.storage.remove_from_tail()
-            return self.storage.add_to_head(value)
-        else:
-            return self.storage.add_to_head(value)
+        if key in self.storage:
+            node = self.storage[key]
+            node.value = (key, value)
+            self.order.move_to_end(node)
+            return
+        #  if at max cap
+        if self.size == self.limit:
+            # remove the least recent from cache
+            del self.storage[self.order.head.value[0]]
+            # the new key, value will be added to head
+            self.order.remove_from_head()
+            self.size -= 1
+
+        self.order.add_to_tail((key, value))
+        self.storage[key] = self.order.tail
+        self.size += 1
